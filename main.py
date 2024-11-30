@@ -47,6 +47,18 @@ async def search_image(file: UploadFile = File(...), top_k: int = 5):
         image_path = os.path.join("images/Images", f"{result}.jpg")
         similar_images.append({"image_path": image_path, "distance": distances[result]})
 
+    # Sort by age in descending order
+    sorted_similar_images = sorted(similar_images, key=lambda x: x["distance"], reverse=True)
+
+    # Read the output HTML and inject the processed image path
+    with open("UI_UX/page3.html", "r") as file:
+        output_html = file.read()
+    #Print main image
+    output_html = output_html.replace("{image_main}", sorted_similar_images[0]["image_path"])
+    #Print 5 related image
+    for i in range(1, sorted_similar_images.length):
+        if(i <= 5):
+            output_html = output_html.replace("{image_url}", sorted_similar_images[i]["image_path"])
 
     return {"results": similar_images}
 
